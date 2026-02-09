@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { Mail, Lock, Eye, EyeOff, ArrowRight, Apple } from 'lucide-react';
+import { Mail, Lock, Eye, EyeOff, ArrowRight, Apple, AlertCircle } from 'lucide-react';
+import { UserRole } from '../types';
 
 interface LoginScreenProps {
-  onLogin: () => void;
+  onLogin: (role: UserRole) => void;
 }
 
 const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
@@ -10,14 +11,26 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
+    setError(null);
     setIsLoading(true);
+
     // Simulate network delay
     setTimeout(() => {
       setIsLoading(false);
-      onLogin();
+      
+      // Credential Logic
+      if (email === 'admin' && password === 'admin') {
+        onLogin('ADMIN');
+      } else if (email.includes('@') && password.length >= 4) {
+        // Simple validation for demo purposes for regular members
+        onLogin('MEMBER');
+      } else {
+        setError('Credenciais inválidas. Tente "admin" / "admin" ou um email válido.');
+      }
     }, 800);
   };
 
@@ -55,29 +68,36 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
         <div className="flex-1 flex flex-col justify-center w-full max-w-md mx-auto">
           <div className="bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-[2.5rem] p-8 shadow-2xl">
             <div className="mb-8 text-center">
-              <h1 className="text-white text-3xl font-bold mb-2">Welcome</h1>
-              <p className="text-zinc-400 text-sm">Sign in to your member portal</p>
+              <h1 className="text-white text-3xl font-bold mb-2">Bem-vindo</h1>
+              <p className="text-zinc-400 text-sm">Acesse o portal de membros</p>
             </div>
+
+            {error && (
+              <div className="mb-6 p-3 rounded-xl bg-red-500/10 border border-red-500/50 flex items-center gap-3 text-red-200 text-xs font-medium animate-pulse">
+                <AlertCircle className="w-4 h-4 shrink-0" />
+                {error}
+              </div>
+            )}
 
             <form onSubmit={handleLogin} className="space-y-5">
               <div className="space-y-2">
-                <label className="text-zinc-500 text-[10px] font-black uppercase tracking-widest pl-1">Email Address</label>
+                <label className="text-zinc-500 text-[10px] font-black uppercase tracking-widest pl-1">Email ou Usuário</label>
                 <div className="relative group">
                   <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-500 w-5 h-5 group-focus-within:text-primary transition-colors" />
                   <input 
-                    type="email" 
+                    type="text" 
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     className="w-full h-14 pl-12 pr-4 bg-white/[0.05] border border-white/10 rounded-2xl text-white placeholder:text-zinc-700 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-all text-sm font-medium"
-                    placeholder="member@pmc.church"
+                    placeholder="membro@pmc.church"
                   />
                 </div>
               </div>
 
               <div className="space-y-2">
                 <div className="flex justify-between items-center px-1">
-                  <label className="text-zinc-500 text-[10px] font-black uppercase tracking-widest">Password</label>
-                  <a href="#" className="text-primary text-[10px] font-bold uppercase tracking-wider hover:opacity-80">Forgot?</a>
+                  <label className="text-zinc-500 text-[10px] font-black uppercase tracking-widest">Senha</label>
+                  <a href="#" className="text-primary text-[10px] font-bold uppercase tracking-wider hover:opacity-80">Esqueceu?</a>
                 </div>
                 <div className="relative group">
                   <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-500 w-5 h-5 group-focus-within:text-primary transition-colors" />
@@ -103,14 +123,14 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                 type="submit"
                 className="w-full h-16 bg-primary text-black font-black uppercase tracking-widest rounded-2xl shadow-glow hover:bg-primary-dark active:scale-[0.98] transition-all mt-6 flex items-center justify-center gap-3 disabled:opacity-70 disabled:cursor-not-allowed"
               >
-                <span className="text-base">{isLoading ? 'Signing In...' : 'Sign In'}</span>
+                <span className="text-base">{isLoading ? 'Entrando...' : 'Entrar'}</span>
                 {!isLoading && <ArrowRight className="w-6 h-6 stroke-[3px]" />}
               </button>
             </form>
 
             <div className="flex items-center my-8">
               <div className="flex-1 h-px bg-white/10"></div>
-              <span className="px-4 text-[9px] text-zinc-600 uppercase tracking-[0.3em] font-black">Quick Access</span>
+              <span className="px-4 text-[9px] text-zinc-600 uppercase tracking-[0.3em] font-black">Acesso Rápido</span>
               <div className="flex-1 h-px bg-white/10"></div>
             </div>
 
@@ -132,12 +152,12 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
         {/* Footer */}
         <div className="pt-6 flex flex-col items-center mt-auto">
           <p className="text-zinc-500 text-xs font-medium">
-            New to the community?
-            <button className="text-primary font-bold hover:underline ml-1">Join now</button>
+            Novo na comunidade?
+            <button className="text-primary font-bold hover:underline ml-1">Cadastre-se</button>
           </p>
           <div className="mt-6 flex gap-8">
-            <button className="text-[10px] text-zinc-700 font-bold uppercase tracking-[0.2em] hover:text-primary transition-colors">Terms</button>
-            <button className="text-[10px] text-zinc-700 font-bold uppercase tracking-[0.2em] hover:text-primary transition-colors">Privacy</button>
+            <button className="text-[10px] text-zinc-700 font-bold uppercase tracking-[0.2em] hover:text-primary transition-colors">Termos</button>
+            <button className="text-[10px] text-zinc-700 font-bold uppercase tracking-[0.2em] hover:text-primary transition-colors">Privacidade</button>
           </div>
         </div>
       </div>

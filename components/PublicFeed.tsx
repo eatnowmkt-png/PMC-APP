@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { Search, Bell, MapPin, Calendar, ArrowRight, User, Heart, Ticket, QrCode, Copy, CreditCard, ChevronRight, LayoutDashboard, Settings, LogOut } from 'lucide-react';
-import { Event } from '../types';
+import { Event, UserRole } from '../types';
 
 interface PublicFeedProps {
   onNavigateAdmin: () => void;
+  onLogout: () => void;
+  userRole: UserRole;
 }
 
 type Tab = 'events' | 'registrations' | 'donate' | 'profile';
@@ -72,7 +74,7 @@ const MY_TICKETS = [
   }
 ];
 
-const PublicFeed: React.FC<PublicFeedProps> = ({ onNavigateAdmin }) => {
+const PublicFeed: React.FC<PublicFeedProps> = ({ onNavigateAdmin, onLogout, userRole }) => {
   const [activeTab, setActiveTab] = useState<Tab>('events');
 
   const renderEvents = () => (
@@ -353,8 +355,8 @@ const PublicFeed: React.FC<PublicFeedProps> = ({ onNavigateAdmin }) => {
             </div>
         </div>
         <div>
-          <h2 className="text-xl font-bold text-black">Gabriel Silva</h2>
-          <p className="text-sm text-gray-500">Membro desde 2021</p>
+          <h2 className="text-xl font-bold text-black">{userRole === 'ADMIN' ? 'Admin' : 'Membro'}</h2>
+          <p className="text-sm text-gray-500">{userRole === 'ADMIN' ? 'Acesso Total' : 'Membro desde 2021'}</p>
         </div>
       </div>
 
@@ -371,12 +373,14 @@ const PublicFeed: React.FC<PublicFeedProps> = ({ onNavigateAdmin }) => {
          
          <div className="h-px bg-gray-200 my-4"></div>
 
-         <button onClick={onNavigateAdmin} className="w-full p-4 rounded-2xl bg-black text-primary flex items-center justify-between font-bold shadow-lg shadow-primary/20 active:scale-95 transition-transform">
-            <span className="flex items-center gap-3"><LayoutDashboard className="w-5 h-5"/> Área Administrativa</span>
-            <ChevronRight className="w-5 h-5"/>
-         </button>
+         {userRole === 'ADMIN' && (
+            <button onClick={onNavigateAdmin} className="w-full p-4 rounded-2xl bg-black text-primary flex items-center justify-between font-bold shadow-lg shadow-primary/20 active:scale-95 transition-transform">
+                <span className="flex items-center gap-3"><LayoutDashboard className="w-5 h-5"/> Área Administrativa</span>
+                <ChevronRight className="w-5 h-5"/>
+            </button>
+         )}
          
-         <button className="w-full p-4 rounded-2xl bg-white border border-red-100 text-red-500 flex items-center justify-center font-black uppercase tracking-widest mt-8 hover:bg-red-50 transition-colors gap-2">
+         <button onClick={onLogout} className="w-full p-4 rounded-2xl bg-white border border-red-100 text-red-500 flex items-center justify-center font-black uppercase tracking-widest mt-8 hover:bg-red-50 transition-colors gap-2">
             <LogOut className="w-4 h-4" />
             Sair
          </button>

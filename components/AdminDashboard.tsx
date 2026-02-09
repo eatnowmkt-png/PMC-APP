@@ -3,12 +3,13 @@ import {
   Bell, User, Search, SlidersHorizontal, 
   Calendar, Users, Edit3, Plus, 
   LayoutDashboard, BarChart3, CheckCircle2, MoreHorizontal,
-  Mail, Phone, Shield, CreditCard
+  Mail, Phone, Shield, CreditCard, LogOut
 } from 'lucide-react';
 import { Event } from '../types';
 
 interface AdminDashboardProps {
   onBack: () => void;
+  onLogout: () => void;
 }
 
 type AdminTab = 'dashboard' | 'events' | 'team' | 'data';
@@ -52,7 +53,7 @@ const TEAM_MEMBERS = [
     { id: 3, name: 'Roberto Junior', role: 'Diácono', email: 'roberto@pmc.church' },
 ];
 
-const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBack }) => {
+const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBack, onLogout }) => {
   const [activeTab, setActiveTab] = useState<AdminTab>('dashboard');
 
   const renderHeader = () => (
@@ -69,12 +70,8 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBack }) => {
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <button className="flex size-10 items-center justify-center rounded-xl hover:bg-white/10 transition-colors text-white relative">
-            <Bell className="w-5 h-5" />
-            <span className="absolute top-2 right-2 size-2 bg-red-500 rounded-full border border-black"></span>
-          </button>
-          <button className="flex size-10 items-center justify-center rounded-xl hover:bg-white/10 transition-colors text-white">
-            <User className="w-5 h-5" />
+          <button onClick={onLogout} className="flex size-10 items-center justify-center rounded-xl hover:bg-white/10 transition-colors text-white relative group">
+            <LogOut className="w-5 h-5 text-gray-400 group-hover:text-red-500 transition-colors" />
           </button>
         </div>
       </header>

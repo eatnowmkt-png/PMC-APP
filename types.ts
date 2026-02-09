@@ -2,6 +2,8 @@ import React from 'react';
 
 export type ViewState = 'LOGIN' | 'PUBLIC' | 'ADMIN';
 
+export type UserRole = 'GUEST' | 'MEMBER' | 'ADMIN';
+
 export interface Event {
   id: string;
   title: string;
